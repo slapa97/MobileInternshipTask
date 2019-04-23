@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,11 +26,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ListOfRepositoriesActivity extends AppCompatActivity {
     String nickname;
-    List<String> repositoriesList = new ArrayList<>();
+    List<String> repositoriesNamesList = new ArrayList<>();
     User user;
 
     private RequestQueue mQueue;
@@ -35,23 +40,37 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_repositories);
-        TextView textView = (TextView) findViewById(R.id.text);
-        TextView tekstListaRepozytorow = (TextView) findViewById(R.id.teks_lista_repozytorow);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String nickname = extras.getString("nickname");
-            textView.setText(nickname);
-            user = new User(nickname);
-        }
-        //user.getListOfRepositories();
-        String stringtmpLisa = "";
-        for (int i = 0; i < repositoriesList.size(); i++) {
-            stringtmpLisa = stringtmpLisa + " " + repositoriesList.get(i);
-        }
-        tekstListaRepozytorow.setText(stringtmpLisa);
+            user = (User) extras.getSerializable("user");
+            repositoriesNamesList.add(user.getListOfRepositories().get(0).getName());
+            repositoriesNamesList.add(user.getListOfRepositories().get(1).getName());
+            repositoriesNamesList.add(user.getListOfRepositories().get(2).getName());
 
-        dowwnloadUserRepositories(user,this);
+        }
+
+        final ListView listView = (ListView) findViewById(R.id.repos_list);
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList));
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                String selectedFromList = (listView.getItemAtPosition(position).toString());
+                //Toast.makeText(getBaseContext(), selectedFromList, Toast.LENGTH_SHORT).show();
+                Repository repository = new Repository();
+                repository = user.getListOfRepositories().get(position);
+                String date =  repository.getUpdatedAt();
+                Toast.makeText(getBaseContext(), date, Toast.LENGTH_SHORT).show();
+            }});
+
     }
+
+        //setContentView(R.layout.activity_list_of_repositories);
+        //user.getListOfRepositories();
+
+
 
     public void dowwnloadUserRepositories(User user, final ListOfRepositoriesActivity activity) {
         final String nickname = user.getNickname();
@@ -60,7 +79,7 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        int x = 5+2;
+                        int x = 5 + 2;
                         int y = x;
 //                        try {
 ////                            List<String> list = new ArrayList<>();
