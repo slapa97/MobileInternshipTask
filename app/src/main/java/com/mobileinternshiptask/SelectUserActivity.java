@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.textclassifier.TextLinks;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,62 +22,19 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class SelectUserActivity extends AppCompatActivity {
     private RequestQueue mQueue;
     private TextView textViewTmpp;
-    EditText githubNicknameEditText;
-    boolean isNicknameExisting;
+    private EditText githubNicknameEditText;
     private User user = null;
     private ArrayList<Repository> listOfRepositories = new ArrayList<>();
 
     public void goToListOfRepositoriesWindow(View view) throws InterruptedException {
-         doesNicknameExists(this);
-         downloadRepositories(this);
+        doesNicknameExists(this);
+        downloadRepositories(this);
     }
 
-//    private void downloadRepositories(final SelectUserActivity activity) {
-//        User user = new User("ziomek");
-//        Repository repository = new Repository();
-//        repository.setName("pierwsze");
-//        repository.setCreatedAt("11.11.1111");
-//        repository.setFokrs(12);
-//        repository.setLanguage("java");
-//        repository.setUpdatedAt("11.11.1111");
-//
-//
-//        Repository repository2 = new Repository();
-//        repository2.setName("drugie");
-//        repository2.setCreatedAt("22.2.222");
-//        repository2.setFokrs(99);
-//        repository2.setLanguage("c++");
-//        repository2.setUpdatedAt("23.2.222");
-//
-//
-//        Repository repository3 = new Repository();
-//        repository3.setName("trzecie");
-//        repository3.setCreatedAt("33.33.3333");
-//        repository3.setFokrs(33);
-//        repository3.setLanguage("c+++");
-//        repository3.setUpdatedAt("33.33.3333");
-//        listOfRepositories.add(repository);
-//        listOfRepositories.add(repository2);
-//        listOfRepositories.add(repository3);
-//
-//
-//
-//        user.setListOfRepositories(listOfRepositories);
-//
-//        Intent intent = new Intent(activity, ListOfRepositoriesActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("user", user);
-//        intent.putExtras(bundle);
-//        startActivity(intent);
-//
-//
-//    }
 
     private void downloadRepositories(final SelectUserActivity activity) {
 
@@ -98,21 +54,10 @@ public class SelectUserActivity extends AppCompatActivity {
                         repository.setLanguage(ob.getString("language"));
                         repository.setUpdatedAt(ob.getString("updated_at"));
                         listOfRepositories.add(repository);
-
-
                     }
-                    //user.setListOfRepositories(listOfRepositories);
-                    //textViewTmpp.setText(listOfRepositories.get(1).getName());
-
-//                    Intent intent = new Intent(activity, ListOfRepositoriesActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putSerializable("user", user);
-//                    intent.putExtras(bundle);
-//                    startActivity(intent);
-
                     Intent intent = new Intent(activity, ListOfRepositoriesActivity.class);
                     Bundle bundle = new Bundle();
-                    user = new User("user",listOfRepositories);
+                    user = new User("user", listOfRepositories);
                     bundle.putSerializable("user", user);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -131,7 +76,7 @@ public class SelectUserActivity extends AppCompatActivity {
         mQueue.add(request);
     }
 
-    private boolean doesNicknameExists(final SelectUserActivity activity) {
+    private void doesNicknameExists(final SelectUserActivity activity) {
 
         final String nickname = githubNicknameEditText.getText().toString();
         String url = githubUsersStringPath(nickname);
@@ -141,13 +86,7 @@ public class SelectUserActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             String login = response.getString("login");
-                            isNicknameExisting = true;
-                            //   Intent intent = new Intent(activity, ListOfRepositoriesActivity.class);
-                            //   Bundle bundle = new Bundle();
                             user = new User(login);
-                            //    bundle.putSerializable("user", user);
-                            //  intent.putExtras(bundle);
-                            //  startActivity(intent);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -161,8 +100,6 @@ public class SelectUserActivity extends AppCompatActivity {
             }
         });
         mQueue.add(request);
-
-        return isNicknameExisting;
     }
 
 
@@ -182,23 +119,5 @@ public class SelectUserActivity extends AppCompatActivity {
         githubNicknameEditText = (EditText) findViewById(R.id.github_nickname_edit_text);
         textViewTmpp = (TextView) findViewById(R.id.textViewtmp);
         mQueue = Volley.newRequestQueue(this);
-        isNicknameExisting = false;
     }
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        isNicknameExisting = false;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        isNicknameExisting = false;
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
 }

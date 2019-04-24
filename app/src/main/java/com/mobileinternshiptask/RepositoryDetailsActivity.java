@@ -11,7 +11,7 @@ import java.time.Instant;
 public class RepositoryDetailsActivity extends AppCompatActivity {
 
     Repository repository;
-    ArrayAdapter<String> arrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,14 +20,12 @@ public class RepositoryDetailsActivity extends AppCompatActivity {
         if (extras != null) {
             repository = (Repository) extras.getSerializable("repository");
         }
-        TextView textView = (TextView)findViewById(R.id.repo_details);
-        String detailsString = "name: " + repository.getName()+ "\n"
-                +"created at: " +repository.getCreatedAt()+ "\n"
-                +"updated at: "+repository.getUpdatedAt()+"\n"
-                +"forks: "+ String.valueOf(repository.getFokrs())+"\n"
-                +"language: "+repository.getLanguage();
+        TextView textView = (TextView) findViewById(R.id.repo_details);
+        String detailsString = "name: " + repository.getName() + "\n"
+                + "created at: " + repository.getCreatedAt() + "\n"
+                + "updated at: " + repository.getUpdatedAt() + "\n"
+                + "forks: " + String.valueOf(repository.getFokrs()) + "\n"
+                + "language: " + repository.getLanguage();
         textView.setText(detailsString);
-
-        Toast.makeText(getBaseContext(), repository.getName(), Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,27 +1,25 @@
 package com.mobileinternshiptask;
 
-import android.icu.util.LocaleData;
-import android.os.AsyncTask;
-
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
-public class Repository  implements Serializable {
+
+public class Repository implements Serializable {
     private String name; /// "name"
     private String language; /// "language"
     private int fokrs; /// "forks"
     private String createdAt; /// "created_at"
     private String updatedAt; /// "updated_at"
 
-    public Repository(String name, String language, int fokrs, String createdAt, String updatedAt)  {
+    public Repository(String name, String language, int fokrs, String createdAt, String updatedAt) {
         this.name = name;
         this.language = language;
         this.fokrs = fokrs;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    public  Repository(){}
+
+    public Repository() {
+    }
 
     public void setName(String name) {
         this.name = name;

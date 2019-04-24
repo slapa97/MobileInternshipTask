@@ -30,5 +30,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.8'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
 }

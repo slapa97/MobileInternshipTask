@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListOfRepositoriesActivity extends AppCompatActivity {
-    String nickname;
     List<String> repositoriesNamesList = new ArrayList<>();
     User user;
     ArrayAdapter<String> arrayAdapter;
@@ -52,7 +51,6 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.repos_list);
         listView.setAdapter(null);
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList);
-        //listView.setAdapter(new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList));
         listView.setAdapter(arrayAdapter);
 
 
@@ -60,12 +58,8 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
 
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                String selectedFromList = (listView.getItemAtPosition(position).toString());
-                //Toast.makeText(getBaseContext(), selectedFromList, Toast.LENGTH_SHORT).show();
                 Repository repository = new Repository();
                 repository = user.getListOfRepositories().get(position);
-                String date = repository.getUpdatedAt();
-                Toast.makeText(getBaseContext(), date, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), RepositoryDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("repository", repository);
@@ -81,15 +75,6 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
         return ("https://api.github.com/users/" + nickname + "/repos");
     }
 
-//    @Override
-//    public void onBackPressed() {
-////        repositoriesNamesList.clear();
-////        arrayAdapter.notifyDataSetChanged();
-////        List<String> emptyList = new ArrayList<>();
-//        listView.setAdapter(null);
-//        finish();
-//    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //isNicknameExisting = false;
@@ -97,6 +82,6 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
             listView.setAdapter(null);
         }
         finish();
-        return false;
+        return true;
     }
 }
