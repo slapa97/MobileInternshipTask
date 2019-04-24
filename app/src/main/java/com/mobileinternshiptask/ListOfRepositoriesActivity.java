@@ -3,6 +3,7 @@ package com.mobileinternshiptask;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,24 +34,26 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
     String nickname;
     List<String> repositoriesNamesList = new ArrayList<>();
     User user;
-
-    private RequestQueue mQueue;
+    ArrayAdapter<String> arrayAdapter;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_repositories);
         Bundle extras = getIntent().getExtras();
+        repositoriesNamesList.clear();
         if (extras != null) {
             user = (User) extras.getSerializable("user");
-            repositoriesNamesList.add(user.getListOfRepositories().get(0).getName());
-            repositoriesNamesList.add(user.getListOfRepositories().get(1).getName());
-            repositoriesNamesList.add(user.getListOfRepositories().get(2).getName());
-
+            for (int i = 0; i < user.getListOfRepositories().size(); i++) {
+                repositoriesNamesList.add(user.getListOfRepositories().get(i).getName());
+            }
         }
-
-        final ListView listView = (ListView) findViewById(R.id.repos_list);
-        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList));
+        listView = (ListView) findViewById(R.id.repos_list);
+        listView.setAdapter(null);
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList);
+        //listView.setAdapter(new ArrayAdapter<String>(this, R.layout.row, repositoriesNamesList));
+        listView.setAdapter(arrayAdapter);
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -61,57 +64,39 @@ public class ListOfRepositoriesActivity extends AppCompatActivity {
                 //Toast.makeText(getBaseContext(), selectedFromList, Toast.LENGTH_SHORT).show();
                 Repository repository = new Repository();
                 repository = user.getListOfRepositories().get(position);
-                String date =  repository.getUpdatedAt();
+                String date = repository.getUpdatedAt();
                 Toast.makeText(getBaseContext(), date, Toast.LENGTH_SHORT).show();
-            }});
-
-    }
-
-        //setContentView(R.layout.activity_list_of_repositories);
-        //user.getListOfRepositories();
-
-
-
-    public void dowwnloadUserRepositories(User user, final ListOfRepositoriesActivity activity) {
-        final String nickname = user.getNickname();
-        String url = githubReposStringPath(nickname);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        int x = 5 + 2;
-                        int y = x;
-//                        try {
-////                            List<String> list = new ArrayList<>();
-////                            JSONArray jsonArray = response.getJSONArray();
-////                            for (int i = 0; i < jsonArray.length(); i++) {
-////                                JSONObject employee = jsonArray.getJSONObject(i);
-////                                list.add(employee.getString("name"));
-////                            }
-//
-//                            // String firstName = employee.getString("firstname");
-//                            //int age = employee.getInt("age");
-//                            //String mail = employee.getString("mail");
-//                        //    String name = response.getString("name");
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+                Intent intent = new Intent(getApplicationContext(), RepositoryDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("repository", repository);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
-        System.out.println("nk");
-        mQueue.add(request);
 
     }
+
 
     private static String githubReposStringPath(String nickname) {
         return ("https://api.github.com/users/" + nickname + "/repos");
     }
 
+//    @Override
+//    public void onBackPressed() {
+////        repositoriesNamesList.clear();
+////        arrayAdapter.notifyDataSetChanged();
+////        List<String> emptyList = new ArrayList<>();
+//        listView.setAdapter(null);
+//        finish();
+//    }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //isNicknameExisting = false;
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            listView.setAdapter(null);
+        }
+        finish();
+        return false;
+    }
 }

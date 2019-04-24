@@ -28,7 +28,8 @@ public class User implements Serializable{
         return nickname;
     }
 
-
-
-
+    public User(String nickname, List<Repository> listOfRepositories) {
+        this.nickname = nickname;
+        this.listOfRepositories = listOfRepositories;
+    }
 }
