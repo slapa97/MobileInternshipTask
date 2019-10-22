@@ -35,5 +35,30 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             />
+
+        <Button
+            android:id="@+id/button_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_button"
+            android:layout_centerInParent="true"
+            android:onClick="goToListDataView"
+            android:text="Searched nicknames history" />
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:layout_alignParentBottom="true"/>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:text="night mode" />
+
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

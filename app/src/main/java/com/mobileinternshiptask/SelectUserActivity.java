@@ -7,11 +7,15 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,12 +33,28 @@ public class SelectUserActivity extends AppCompatActivity {
     private EditText githubNicknameEditText;
     private User user = null;
     private ArrayList<Repository> listOfRepositories = new ArrayList<>();
+    DatabaseHelper databaseHelper;
+    SharedPref sharedPref;
+
+
+    private Switch switchNight;
+    private CheckBox checkBoxNight;
+    private Button buttonHistory;
 
     public void goToListOfRepositoriesWindow(View view) throws InterruptedException {
         doesNicknameExists(this);
         downloadRepositories(this);
+        addNicknametoDatabase();
     }
 
+    public void addNicknametoDatabase() {
+        String newEntry = githubNicknameEditText.getText().toString();
+        if (githubNicknameEditText.length() != 0) {
+            AddData(newEntry);
+        } else {
+            toastMessage("You must put something in the text field!");
+        }
+    }
 
     private void downloadRepositories(final SelectUserActivity activity) {
 
@@ -111,13 +131,74 @@ public class SelectUserActivity extends AppCompatActivity {
         return ("https://api.github.com/users/" + nickname + "/repos");
     }
 
+
+    private void toastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true) {
+            setTheme(R.style.ThemeOverlay_AppCompat_Dark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_user);
         final Button searchButton = (Button) findViewById(R.id.search_button);
         githubNicknameEditText = (EditText) findViewById(R.id.github_nickname_edit_text);
         textViewTmpp = (TextView) findViewById(R.id.textViewtmp);
         mQueue = Volley.newRequestQueue(this);
+        databaseHelper = new DatabaseHelper(this);
+        Switch switchNight = (Switch) findViewById(R.id.switch1);
+
+//        Intent intent = new Intent(My);
+//        // Check if you have the right broadcast intent
+//        if (intent.getAction().equals("android.intent.action.AIRPLANE_MODE")) {
+//            // Get all extras
+//            Bundle extras = intent.getExtras();
+//
+//            // Fetch the boolean extra using getBoolean()
+//            boolean state = extras.getBoolean("state");
+//
+//            // Log the value of the extra
+//            Log.d("MYAPP", "AIRPLANE MODE: " + state);
+//        }
+
+
+        if (sharedPref.loadNightModeState()==true) {
+            switchNight.setChecked(true);
+        }
+        switchNight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    sharedPref.setNightModeState(true);
+                    restartApp();
+                } else {
+                    sharedPref.setNightModeState(false);
+                    restartApp();
+                }
+            }
+        });
+    }
+    public void restartApp() {
+        Intent i = new Intent(getApplicationContext(), SelectUserActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void goToListDataView(View view) {
+        Intent intent = new Intent(this, ListDataActivity.class);
+        startActivity(intent);
+    }
+
+    public void AddData(String newEntry) {
+        boolean insertData = databaseHelper.addData(newEntry);
+
+        if (insertData) {
+            toastMessage("Data Successfully Inserted!");
+        } else {
+            toastMessage("Something went wrong");
+        }
     }
 }
